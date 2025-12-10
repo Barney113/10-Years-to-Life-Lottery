@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏀 DRAMATIC BASKETBALL LOTTERY EXPERIENCE</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Impact', 'Arial Black', Arial, sans-serif;
+            background: #000;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* Setup Screen */
+        .setup-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .setup-content {
+            background: rgba(0,0,0,0.8);
+            padding: 40px;
+            border-radius: 20px;
+            border: 3px solid #FFD700;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .setup-title {
+            font-size: 2.5rem;
+            color: #FFD700;
+            margin-bottom: 20px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.8);
+            animation: glow 2s infinite alternate;
+        }
+
+        @keyframes glow {
+            0% { text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 20px #FFD700; }
+            100% { text-shadow: 3px 3px 6px rgba(0,0,0,0.8), 0 0 40px #FFD700, 0 0 60px #FFD700; }
+        }
+
+        .team-inputs {
+            margin: 30px 0;
+        }
+
+        .team-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 15px;
+            margin: 10px 0;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .team-header {
+            background: rgba(255,215,0,0.2);
+            font-weight: bold;
+            color: #FFD700;
+        }
+
+        input {
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.9);
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .race-button {
+            background: linear-gradient(135deg, #ff1744, #d32f2f);
+            border: none;
+            padding: 20px 40px;
+            border-radius: 25px;
+            color: white;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 20px 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+        }
+
+        .race-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .race-button.start {
+            background: linear-gradient(135deg, #FFD700, #FFA500);
+            color: #000;
+            font-size: 24px;
+            padding: 25px 50px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Main Experience Screen */
+        .experience-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: none;
+            background: #000;
+        }
+
+        .video-backdrop {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        #raceVideo {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: brightness(0.7) contrast(1.2);
+        }
+
+        /* Dramatic Overlays */
+        .race-commentary {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .commentary-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .commentary-text {
+            font-size: 2rem;
+            color: #FFD700;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.9);
+            margin-bottom: 15px;
+            animation: commentaryPulse 0.5s ease-out;
+        }
+
+        @keyframes commentaryPulse {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .suspense-meter {
+            width: 80%;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px;
+            margin: 20px auto;
+            border: 2px solid #FFD700;
+            overflow: hidden;
+        }
+
+        .suspense-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #ff1744, #FFD700, #ff1744);
+            background-size: 200% 100%;
+            width: 0%;
+            transition: width 2s ease;
+            animation: suspenseShimmer 2s infinite;
+        }
+
+        @keyframes suspenseShimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* MASSIVE Reveals */
+        .pick-reveal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .reveal-content {
+            text-align: center;
+            animation: massiveReveal 4s ease-out;
+        }
+
+        @keyframes massiveReveal {
+            0% {
+                transform: scale(0.3) rotate(-15deg);
+                opacity: 0;
+                filter: blur(20px);
+            }
+            25% {
+                transform: scale(1.3) rotate(5deg);
+                opacity: 0.8;
+                filter: blur(5px);
+            }
+            75% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+                filter: blur(0px);
+            }
+            100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+                filter: blur(0px);
+            }
+        }
+
+        .reveal-announcement {
+            font-size: 3rem;
+            color: #ff1744;
+            margin-bottom: 30px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.9);
+            font-weight: 900;
+        }
+
+        .reveal-pick-number {
+            font-size: 4rem;
+            color: #FFD700;
+            margin: 30px 0;
+            text-shadow: 5px 5px 10px rgba(0,0,0,0.9);
+            font-weight: 900;
+        }
+
+        .reveal-team-name {
+            font-size: 6rem;
+            color: white;
+            margin: 40px 0;
+            text-shadow: 6px 6px 12px rgba(0,0,0,0.9);
+            font-weight: 900;
+            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: goldShine 2s infinite;
+        }
+
+        .reveal-team-name.first-pick {
+            font-size: 7rem;
+            animation: goldShine 1s infinite, firstPickPulse 3s infinite;
+            background: linear-gradient(45deg, #FFD700, #FFF, #FFD700, #FFA500);
+            background-size: 300% 300%;
+        }
+
+        @keyframes firstPickPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes goldShine {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+
+        .reveal-details {
+            font-size: 2rem;
+            color: #ccc;
+            margin: 20px 0;
+        }
+
+        .reveal-reaction {
+            font-size: 2.5rem;
+            color: #ff1744;
+            margin-top: 30px;
+            animation: celebration 1s ease-out infinite;
+        }
+
+        @keyframes celebration {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            25% { transform: scale(1.1) rotate(-5deg); }
+            75% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        /* Progress Tracking */
+        .race-progress {
+            position: absolute;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            padding: 20px 40px;
+            border-radius: 25px;
+            border: 3px solid #FFD700;
+            z-index: 20;
+        }
+
+        .progress-text {
+            color: #FFD700;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* Final Results */
+        .final-results {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .results-content {
+            background: rgba(0,0,0,0.9);
+            padding: 50px;
+            border-radius: 30px;
+            border: 4px solid #FFD700;
+            max-width: 800px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .results-title {
+            font-size: 3rem;
+            color: #FFD700;
+            margin-bottom: 40px;
+            text-shadow: 4px 4px 8px rgba(0,0,0,0.8);
+        }
+
+        .final-draft-order {
+            text-align: left;
+            margin: 30px 0;
+        }
+
+        .final-pick {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            margin: 10px 0;
+            background: rgba(255,215,0,0.1);
+            border-radius: 10px;
+            border-left: 5px solid #FFD700;
+            font-size: 1.3rem;
+        }
+
+        .pick-pos {
+            color: #FFD700;
+            font-weight: bold;
+        }
+
+        .team-final {
+            color: white;
+            font-weight: bold;
+        }
+
+        .restart-button {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            padding: 20px 40px;
+            border-radius: 25px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .restart-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .setup-title { font-size: 1.8rem; }
+            .commentary-text { font-size: 1.3rem; }
+            .reveal-team-name { font-size: 3rem; }
+            .reveal-pick-number { font-size: 2.5rem; }
+            .reveal-announcement { font-size: 2rem; }
+            .results-title { font-size: 2rem; }
+            .final-pick { font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Setup Screen -->
+    <div class="setup-screen" id="setupScreen">
+        <div class="setup-content">
+            <div class="setup-title">🏀 DRAMATIC DRAFT LOTTERY 🏀</div>
+            <p style="font-size: 1.2rem; margin-bottom: 30px; opacity: 0.9;">
+                Get ready for the most exciting lottery experience ever!
+            </p>
+            
+            <div class="team-inputs">
+                <div class="team-row team-header">
+                    <div>Team Name</div>
+                    <div>Points For</div>
+                </div>
+                <div id="teamInputContainer"></div>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <button class="race-button" onclick="loadExampleTeams()">📝 Load Examples</button>
+                <button class="race-button start" onclick="startDramaticRace()">🏁 START THE RACE!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Experience Screen -->
+    <div class="experience-screen" id="experienceScreen">
+        <div class="video-backdrop">
+            <video id="raceVideo" muted>
+                <source src="/mnt/user-data/uploads/856188-hd_1920_1080_30fps.mp4" type="video/mp4">
+            </video>
+        </div>
+
+        <div class="race-commentary">
+            <div class="race-progress">
+                <div class="progress-text" id="progressText">🏁 And they're off!</div>
+            </div>
+
+            <div class="commentary-bar">
+                <div class="commentary-text" id="commentaryText">
+                    The race is about to begin! Six teams battle for lottery supremacy!
+                </div>
+                <div class="suspense-meter">
+                    <div class="suspense-fill" id="suspenseFill"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pick Reveal Overlay -->
+        <div class="pick-reveal" id="pickReveal">
+            <div class="reveal-content">
+                <div class="reveal-announcement" id="revealAnnouncement">🏀 SHOT MADE!</div>
+                <div class="reveal-pick-number" id="revealPickNumber">PICK 1.01</div>
+                <div class="reveal-team-name" id="revealTeamName">LAKERS ELITE</div>
+                <div class="reveal-details" id="revealDetails">1180.5 pts • Originally 12th place</div>
+                <div class="reveal-reaction" id="revealReaction">UNBELIEVABLE!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Results Screen -->
+    <div class="final-results" id="finalResults">
+        <div class="results-content">
+            <div class="results-title">🏆 FINAL DRAFT ORDER</div>
+            <div class="final-draft-order" id="finalDraftOrder"></div>
+            <button class="restart-button" onclick="restartLottery()">🔄 Run Another Lottery</button>
+        </div>
+    </div>
+
+    <script>
+        class DramaticLottery {
+            constructor() {
+                this.teams = [];
+                this.draftOrder = [];
+                this.currentPick = 1;
+                
+                // Dramatic commentary for each stage
+                this.raceCommentary = [
+                    "🏁 AND THEY'RE OFF! The lottery balls are spinning!",
+                    "🌪️ Coming around the first turn, tensions are rising!",
+                    "⚡ HALFWAY THROUGH! Anything can happen!",
+                    "🔥 The excitement is building to a fever pitch!",
+                    "💥 We're in the final stretch! Who will it be?!",
+                    "🎯 THIS IS IT! The moment of truth!"
+                ];
+
+                this.suspenseText = [
+                    "The lottery machine is heating up...",
+                    "Teams are on the edge of their seats!",
+                    "The suspense is killing everyone!",
+                    "You can cut the tension with a knife!",
+                    "Hearts are pounding across the league!",
+                    "This is the most dramatic moment!"
+                ];
+
+                this.revealReactions = [
+                    "STUNNING!", "INCREDIBLE!", "UNBELIEVABLE!", 
+                    "SHOCKING!", "AMAZING!", "MIND-BLOWING!"
+                ];
+
+                // Perfect lottery algorithm
+                this.positionRestrictions = {
+                    12: [1, 2, 3], 11: [1, 2, 3, 4], 10: [1, 2, 3, 4, 5],
+                    9: [2, 3, 4, 5, 6], 8: [3, 4, 5, 6], 7: [4, 5, 6],
+                };
+                
+                this.firstPickOdds = { 12: 66.66, 11: 21.34, 10: 12.0 };
+                
+                this.generateTeamInputs();
+            }
+
+            generateTeamInputs() {
+                const container = document.getElementById('teamInputContainer');
+                for (let i = 1; i <= 6; i++) {
+                    const div = document.createElement('div');
+                    div.className = 'team-row';
+                    div.innerHTML = `
+                        <input type="text" id="name-${i}" placeholder="Team ${i}" value="Team ${i}">
+                        <input type="number" id="points-${i}" step="0.1" placeholder="1500.0">
+                    `;
+                    container.appendChild(div);
+                }
+            }
+
+            loadExampleTeams() {
+                const examples = [
+                    { name: "Thunder Strikes", points: 1180.5 },
+                    { name: "Lightning Bolts", points: 1245.3 },
+                    { name: "Storm Chasers", points: 1290.8 },
+                    { name: "Hurricane Force", points: 1340.7 },
+                    { name: "Tornado Alley", points: 1395.2 },
+                    { name: "Cyclone Power", points: 1445.1 }
+                ];
+
+                examples.forEach((team, i) => {
+                    document.getElementById(`name-${i+1}`).value = team.name;
+                    document.getElementById(`points-${i+1}`).value = team.points;
+                });
+            }
+
+            collectTeamData() {
+                const teams = [];
+                for (let i = 1; i <= 6; i++) {
+                    const name = document.getElementById(`name-${i}`).value.trim();
+                    const points = parseFloat(document.getElementById(`points-${i}`).value);
+                    if (!name || isNaN(points) || points <= 0) return null;
+                    teams.push({ name, points });
+                }
+
+                teams.sort((a, b) => a.points - b.points);
+                teams.forEach((team, i) => {
+                    team.lotteryRank = 12 - i;
+                });
+
+                return teams;
+            }
+
+            async startDramaticRace() {
+                this.teams = this.collectTeamData();
+                if (!this.teams) {
+                    alert('Please fill in all team data first!');
+                    return;
+                }
+
+                // Hide setup, show experience
+                document.getElementById('setupScreen').style.display = 'none';
+                document.getElementById('experienceScreen').style.display = 'block';
+
+                // Start video
+                const video = document.getElementById('raceVideo');
+                video.play();
+                video.loop = true;
+
+                // Run the dramatic lottery
+                await this.runDramaticLottery();
+            }
+
+            async runDramaticLottery() {
+                const availableTeams = [...this.teams];
+                
+                // Run the complete lottery first (internal calculation)
+                const fullDraftOrder = [];
+                const teamsForLottery = [...availableTeams];
+
+                for (let pick = 1; pick <= 6; pick++) {
+                    const forcedTeam = this.getForcedTeam(teamsForLottery, pick);
+                    let selectedTeam;
+                    
+                    if (forcedTeam) {
+                        selectedTeam = forcedTeam;
+                    } else {
+                        const weights = this.calculateWeights(teamsForLottery, pick);
+                        const selectedIndex = this.weightedRandomSelect(weights);
+                        selectedTeam = teamsForLottery[selectedIndex];
+                    }
+
+                    fullDraftOrder.push({
+                        ...selectedTeam,
+                        pickNumber: pick,
+                        isForced: !!forcedTeam
+                    });
+                    
+                    const teamIndex = teamsForLottery.findIndex(t => t === selectedTeam);
+                    teamsForLottery.splice(teamIndex, 1);
+                }
+
+                // Now reveal in REVERSE order for maximum suspense!
+                // Start with pick 1.06 and work backwards to 1.01
+                for (let revealIndex = 5; revealIndex >= 0; revealIndex--) {
+                    const pick = fullDraftOrder[revealIndex];
+                    const displayPickNumber = revealIndex + 1; // 6, 5, 4, 3, 2, 1
+                    
+                    // Build suspense (gets MORE intense as we get to pick 1)
+                    await this.buildSuspense(displayPickNumber, revealIndex === 0);
+                    
+                    // MASSIVE DRAMATIC REVEAL
+                    await this.dramaticReveal(pick, displayPickNumber, revealIndex === 0);
+                    
+                    // Add to displayed order
+                    this.draftOrder.unshift(pick); // Add to front for reverse display
+                    
+                    // Brief pause before next pick (shorter for later picks to build momentum)
+                    await this.sleep(revealIndex === 0 ? 3000 : 1500); // Longer pause after #1 pick
+                }
+
+                // Show final results
+                await this.showFinalResults();
+            }
+
+            async buildSuspense(displayPickNumber, isFirstPick) {
+                const commentary = document.getElementById('commentaryText');
+                const progress = document.getElementById('progressText');
+                const suspenseFill = document.getElementById('suspenseFill');
+
+                // Update progress - showing countdown style
+                progress.textContent = `🎯 REVEALING PICK 1.${displayPickNumber.toString().padStart(2, '0')}`;
+                
+                // Special commentary for reverse order
+                const reverseCommentary = [
+                    "🏁 We start with the 6th pick in the lottery order...",
+                    "🌪️ Moving up the board! Pick 5 is coming up!",
+                    "⚡ Halfway through the reveals! Pick 4!",
+                    "🔥 Getting closer to the top! Who got pick 3?!",
+                    "💥 Just two picks left! This is pick 2!",
+                    "🏆 THIS IS IT! THE #1 PICK! THE MOMENT EVERYONE'S BEEN WAITING FOR!"
+                ];
+
+                const reverseSuspenseText = [
+                    "Let's see who landed at pick 6...",
+                    "The tension builds as we work our way up!",
+                    "Teams are getting nervous about the top picks!",
+                    "We're in the danger zone now!",
+                    "Hearts are racing! Who got the 2nd pick?!",
+                    "THE ULTIMATE MOMENT! WHO GETS THE #1 PICK?!"
+                ];
+
+                // Build suspense with special intensity for #1 pick
+                const suspenseTime = isFirstPick ? 4000 : 2000;
+                const commentaryIndex = 6 - displayPickNumber;
+                
+                commentary.textContent = reverseCommentary[commentaryIndex];
+                suspenseFill.style.width = `${(6 - displayPickNumber + 1) * 16.67}%`;
+                
+                await this.sleep(suspenseTime / 2);
+                
+                commentary.textContent = reverseSuspenseText[commentaryIndex];
+                
+                await this.sleep(suspenseTime / 2);
+                
+                if (isFirstPick) {
+                    commentary.textContent = "🎯 DRUMROLL PLEASE... THE #1 PICK GOES TO...";
+                    await this.sleep(2000); // Extra suspense for #1
+                } else {
+                    commentary.textContent = `🔥 AND PICK 1.${displayPickNumber.toString().padStart(2, '0')} GOES TO...`;
+                }
+            }
+
+            async dramaticReveal(team, displayPickNumber, isFirstPick) {
+                const revealOverlay = document.getElementById('pickReveal');
+                const announcement = document.getElementById('revealAnnouncement');
+                const pickNum = document.getElementById('revealPickNumber');
+                const teamName = document.getElementById('revealTeamName');
+                const details = document.getElementById('revealDetails');
+                const reaction = document.getElementById('revealReaction');
+
+                // Special announcements for different picks
+                let specialAnnouncement;
+                if (isFirstPick) {
+                    specialAnnouncement = "🏆 #1 OVERALL PICK!";
+                } else if (displayPickNumber === 2) {
+                    specialAnnouncement = "🥈 2ND OVERALL PICK!";
+                } else if (displayPickNumber === 3) {
+                    specialAnnouncement = "🥉 3RD OVERALL PICK!";
+                } else {
+                    specialAnnouncement = "🏀 LOTTERY PICK REVEALED!";
+                }
+
+                // Set content
+                announcement.textContent = specialAnnouncement;
+                pickNum.textContent = `PICK 1.${displayPickNumber.toString().padStart(2, '0')}`;
+                teamName.textContent = team.name.toUpperCase();
+                details.textContent = `${team.points} pts • Originally ${team.lotteryRank}th place`;
+                
+                // Add special styling for #1 pick
+                if (isFirstPick) {
+                    teamName.classList.add('first-pick');
+                    pickNum.style.fontSize = '5rem';
+                    announcement.style.fontSize = '4rem';
+                } else {
+                    teamName.classList.remove('first-pick');
+                    pickNum.style.fontSize = '4rem';
+                    announcement.style.fontSize = '3rem';
+                }
+                
+                // Special reactions for top picks
+                const topPickReactions = [
+                    "ABSOLUTELY INCREDIBLE!", "WHAT A MOMENT!", "UNBELIEVABLE!", 
+                    "THE CROWD GOES WILD!", "HISTORY MADE!", "STUNNING UPSET!"
+                ];
+                const regularReactions = [
+                    "GREAT PICK!", "SOLID RESULT!", "THERE IT IS!", 
+                    "AS EXPECTED!", "NICE PLACEMENT!", "WELL DESERVED!"
+                ];
+                
+                const reactions = isFirstPick ? topPickReactions : regularReactions;
+                reaction.textContent = reactions[Math.floor(Math.random() * reactions.length)];
+
+                // Show dramatic reveal (longer for #1 pick)
+                revealOverlay.style.display = 'flex';
+                
+                await this.sleep(isFirstPick ? 6000 : 4000);
+                
+                revealOverlay.style.display = 'none';
+            }
+
+            async showFinalResults() {
+                const finalScreen = document.getElementById('finalResults');
+                const draftOrderContainer = document.getElementById('finalDraftOrder');
+
+                let orderHTML = '';
+                this.draftOrder.forEach((pick, i) => {
+                    orderHTML += `
+                        <div class="final-pick">
+                            <span class="pick-pos">1.${(i + 1).toString().padStart(2, '0')}</span>
+                            <span class="team-final">${pick.name}</span>
+                            <span style="color: #ccc;">${pick.points} pts</span>
+                        </div>
+                    `;
+                });
+
+                draftOrderContainer.innerHTML = orderHTML;
+
+                // Hide experience, show results
+                document.getElementById('experienceScreen').style.display = 'none';
+                finalScreen.style.display = 'flex';
+            }
+
+            restartLottery() {
+                // Reset everything
+                this.draftOrder = [];
+                this.currentPick = 1;
+                
+                document.getElementById('finalResults').style.display = 'none';
+                document.getElementById('setupScreen').style.display = 'flex';
+                
+                const video = document.getElementById('raceVideo');
+                video.pause();
+                video.currentTime = 0;
+            }
+
+            // Perfect lottery algorithm methods
+            getForcedTeam(availableTeams, currentPick) {
+                for (const team of availableTeams) {
+                    const allowedPicks = this.positionRestrictions[team.lotteryRank] || [];
+                    if (!allowedPicks.includes(currentPick)) continue;
+                    
+                    let canReceiveFuture = false;
+                    for (let futurePick = currentPick + 1; futurePick <= 6; futurePick++) {
+                        if (allowedPicks.includes(futurePick)) {
+                            canReceiveFuture = true;
+                            break;
+                        }
+                    }
+                    
+                    if (!canReceiveFuture) return team;
+                }
+                return null;
+            }
+
+            calculateWeights(teams, pickNumber) {
+                const weights = [];
+                teams.forEach((team) => {
+                    const allowedPicks = this.positionRestrictions[team.lotteryRank] || [];
+                    if (!allowedPicks.includes(pickNumber)) {
+                        weights.push(0);
+                        return;
+                    }
+
+                    let weight;
+                    if (pickNumber === 1 && this.firstPickOdds[team.lotteryRank]) {
+                        weight = this.firstPickOdds[team.lotteryRank];
+                    } else {
+                        weight = team.lotteryRank * 10;
+                    }
+                    weights.push(weight);
+                });
+                return weights;
+            }
+
+            weightedRandomSelect(weights) {
+                const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+                if (totalWeight === 0) return 0;
+                let random = Math.random() * totalWeight;
+                for (let i = 0; i < weights.length; i++) {
+                    random -= weights[i];
+                    if (random <= 0) return i;
+                }
+                return weights.length - 1;
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize
+        const dramaticLottery = new DramaticLottery();
+
+        function loadExampleTeams() { dramaticLottery.loadExampleTeams(); }
+        function startDramaticRace() { dramaticLottery.startDramaticRace(); }
+        function restartLottery() { dramaticLottery.restartLottery(); }
+
+        // Load examples on startup
+        window.addEventListener('load', () => {
+            dramaticLottery.loadExampleTeams();
+        });
+    </script>
+</body>
+</html>
